@@ -1,0 +1,90 @@
+<html>
+    <head>
+        <link href='http://fonts.googleapis.com/css?family=Droid+Serif|Oswald|Karla' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.1/css/foundation.min.css">
+        <link rel="stylesheet" href="./css/main.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.5.14/webfontloader.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="row">
+                <h1>Text Stats</h1>
+            </div>
+
+            <div class="row">
+                <span class="error">X</span>
+            </div>
+
+            <div class="row">
+                <select class="fontFamily">
+                    <optgroup label="System Default">
+                        <option default value="sans">Sans</option>
+                        <option value="serif">Serif</option>
+                        <option val="mono">Mono</option>
+                    </optgroup>
+                    <optgroup label="Google fonts">
+                        <option value="Droid Sans">Droid Sans</option>
+                        <option value="Karla">Karla</option>
+                        <option value="Oswald">Oswald</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="row collapse postfix-radius">
+                <div class="small-10 columns">
+                    <input type="text" name="" class="fontSize" placeholder="font-size">
+                </div>
+                <div class="small-2 columns">
+                    <span class="postfix">px</span>
+                </div>
+                <small class="error" data-err-empty="This value cannot be blank"></small>
+            </div>
+
+            <div class="row collapse postfix-radius">
+                <div class="small-10 columns">
+                    <input type="text" name="" class="maxWidth" placeholder="max-width">
+                </div>
+                <div class="small-2 columns">
+                    <span class="postfix">px</span>
+                </div>
+                <small class="error" data-err-empty="This value cannot be blank"></small>
+            </div>
+
+            <div class="row">
+                <textarea class="input-content" cols="30" rows="10" placeholder="Enter the text you want to render here"></textarea>
+            </div>
+
+            <div class="row">
+                <a href="#" class="button success btn-render">Render</a>
+            </div>
+
+            <div class="row">
+                <div class="result">
+                    <div class="summary">
+                        <p>
+                            <span>Total String Width:</span>
+                            <span class="avgchrw">X</span>
+                        </p>
+                        <p>
+                            <span>Avg. Character Width:</span>
+                            <span class="avgchrw">X</span>
+                        </p>
+                        <p>
+                            <span>Number of Lines (appx after apply max-width):</span>
+                            <span class="avgchrw">X</span>
+                        </p>
+                    </div>
+                    <div class="rendered-content"></div>
+                </div>
+            </div>
+
+            <div class="row byee-me">
+                Made with <strong>&#10084;</strong> by <a href="mailto:n@najamkhn.com">Najam</a>
+            </div>
+
+        </div>
+        <script src="./js/main.js"></script>
+    </body>
+</html>

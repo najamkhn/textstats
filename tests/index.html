@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Mocha Tests</title>
+        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+        <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.5.14/webfontloader.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+        <style type="text/css">
+            body {
+                zoom: 160% !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <script src="../node_modules/should/should.js"></script>
+        <script src="../node_modules/mocha/mocha.js"></script>
+        <script src="../js/main.js"></script>
+        <script>mocha.setup('bdd')</script>
+        <script src="test.js"></script>
+        <script>
+        mocha.checkLeaks();
+        mocha.globals(['jQuery']);
+        mocha.run();
+        </script>
+    </body>
+</html>
