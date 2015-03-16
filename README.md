@@ -12,4 +12,4 @@ npm run start
 ```
 
 ===
-Powered by [HarpJS](http://example.com/ "HarpJS")
+Powered by [HarpJS](http://harpjs.com/ "HarpJS")
