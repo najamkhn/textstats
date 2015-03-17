@@ -1,56 +1,36 @@
 describe('Tests', function(){
     it('If fontSize is bigger than maxWidth', function(){
         TextStats.isChanged({
-            "inputContentVal": "hello",
-            "fontFamily": "sans",
-            "fontSize": "12",
-            "maxWidth": "11",
-            "results": $('.result'),
-            "renderedContent": $('.rendered-content')
+            "fontSize": $('foo').val('12'),
+            "maxWidth": $('bar').val('11'),
         })().should.equal(-1);
     });
 
     it('If fontSize is empty or zero', function(){
         TextStats.isChanged({
-            "inputContentVal": "hello",
-            "fontFamily": "sans",
-            "fontSize": "0",
-            "maxWidth": "11",
-            "results": $('.result'),
-            "renderedContent": $('.rendered-content')
+            "fontSize": $('foo').val('0'),
+            "maxWidth": $('bar').val('11'),
         })().should.equal(-1);
     });
 
     it('If fontSize is less than zero', function(){
         TextStats.isChanged({
-            "inputContentVal": "hello",
-            "fontFamily": "sans",
-            "fontSize": "-1",
-            "maxWidth": "11",
-            "results": $('.result'),
-            "renderedContent": $('.rendered-content')
+            "fontSize": $('foo').val('-1'),
+            "maxWidth": $('bar').val('11'),
         })().should.equal(-1);
     });
 
     it('If maxWidth is empty or zero', function(){
         TextStats.isChanged({
-            "inputContentVal": "hello",
-            "fontFamily": "sans",
-            "fontSize": "10",
-            "maxWidth": "0",
-            "results": $('.result'),
-            "renderedContent": $('.rendered-content')
+            "fontSize": $('foo').val('10'),
+            "maxWidth": $('bar').val(''),
         })().should.equal(-1);
     });
 
     it('If maxWidth is less than zero', function(){
         TextStats.isChanged({
-            "inputContentVal": "hello",
-            "fontFamily": "sans",
-            "fontSize": "10",
-            "maxWidth": "-1",
-            "results": $('.result'),
-            "renderedContent": $('.rendered-content')
+            "fontSize": $('foo').val('10'),
+            "maxWidth": $('bar').val('-1'),
         })().should.equal(-1);
     });
 

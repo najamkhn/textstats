@@ -32,7 +32,7 @@
         var width = NS.textWidth(text, fontProp);
         return {
             'width': width,
-            'avgWidth': Math.ceil(width/fontSize)
+            'avgWidth': Math.ceil(width/parseFloat(fontSize))
         };
     };
 
@@ -42,15 +42,17 @@
             var return_val = false;
 
             // Checking if either of the values are not null and max-width is not greater than font-size.
-            if ((args.fontSize > args.maxWidth) || (!!args.fontSize || !!args.maxWidth))
+            if ((parseInt(args.fontSize.val()) > parseInt(args.maxWidth.val())) || (!args.fontSize.val() || !args.maxWidth.val())) {
+                $('span.error').html('Some of the required values are empty or invalid').css('display', 'block');
                 return -1;
+            }
 
             // Only do something when there is content
             if (!!args.inputContentVal) {
-                var fontProp = args.fontSize + ' ' + args.fontFamily,
-                    values   = NS.averageCharacterWidth(args.inputContentVal,
+                var fontProp = args.fontSize.val() + ' ' + args.fontFamily.val().toLowerCase(),
+                    values   = NS.averageCharacterWidth(args.inputContentVal.val(),
                                                         fontProp,
-                                                        args.fontSize);
+                                                        args.fontSize.val());
 
                 // Show the results container
                 args.results.show();
@@ -58,8 +60,16 @@
                 // Setup content so its renderable
                 args.renderedContent
                     .css('font', fontProp)
-                    .html(args.inputContentVal)
-                    .width(args.maxWidth);
+                    .css('line-height', 'inherit')
+                    .html(args.inputContentVal.val())
+                    .width(args.maxWidth.val());
+
+                args.totalStrWidth.html(values.width);
+                args.totalChrs.html(args.inputContentVal.val().length);
+                args.numLines.html(
+                    args.renderedContent.height() / parseInt(args.renderedContent.css('line-height'))
+                );
+
             }
 
             return return_val;
@@ -70,12 +80,15 @@
         $('.btn-render').on(
             'click',
             NS.isChanged({
-                "inputContentVal" : $('.input-content').val(),
-                "fontSize"        : $('.fontSize').val() || "12",
-                "fontFamily"      : $('.fontFamily').val() && $('.fontFamily').val().toLowerCase() || "sans",
+                "inputContentVal" : $('.input-content'),
+                "fontSize"        : $('.fontSize'),
+                "fontFamily"      : $('.fontFamily'),
                 "results"         : $('.result'),
-                "maxWidth"        : $('.maxWidth').val(),
-                "renderedContent" : $('.rendered-content')
+                "maxWidth"        : $('.maxWidth'),
+                "renderedContent" : $('.rendered-content'),
+                "totalStrWidth"   : $('.totalStrWidth'),
+                "totalChrs"       : $('.totalChrs'),
+                "numLines"        : $('.numLines')
             })
         );
     });

@@ -24,6 +24,7 @@
 .rendered-content {
     margin: 0 auto;
     background: #f0f0f0;
+    word-wrap: break-word;
 }
 
 .summary p {
