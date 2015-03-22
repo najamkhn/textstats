@@ -10,6 +10,39 @@
 
 (function(window, document, $, NS, undefined) {
 
+    NS.longestLine = function(text, fontProp) {
+        var renderEl = $('.rendered-content').clone(),
+            maxWidth = parseInt($('.maxWidth').val()),
+            lineNo = 0, lineContent = [], lineWidth = 0;
+
+        renderEl.addClass('rendered-content-clone');
+        renderEl.css('width', $('.maxWidth').val());
+
+        $('body').append(renderEl);
+
+        textList = text.split(' ');
+
+        textList.forEach(function(el, index) {
+            lineNo = (parseInt(renderEl.html(textList.slice(0, index).join(' ')).height()) / parseInt(renderEl.css('line-height')) - 1)
+            if (!lineContent[lineNo]) {
+                lineContent[lineNo] = []
+                if (lineContent[lineNo - 1]) {
+                    console.log(
+                        lineNo,
+                        parseInt(renderEl.html(textList.slice(0, index).join(' ')).height()),
+                        parseInt(renderEl.css('line-height')),
+                        lineContent[lineNo - 1].join(' '),
+                        NS.textWidth(lineContent[lineNo - 1].join(' '), fontProp)
+                    );
+                }
+            }
+            lineContent[lineNo].push(el);
+        });
+
+        renderEl.remove();
+    }
+
+
     // Get set width via the DOM way
     NS.textWidth = function(text, fontProp) {
 
