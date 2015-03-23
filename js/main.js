@@ -1,75 +1,78 @@
 /*
-*   main.js
-*
-*   Created by Najam K.
-*   --
-*
-*   Contains functions to display text statistics
-*
-*/
+ *   main.js
+ *
+ *   Created by Najam K.
+ *   --
+ *
+ *   Contains functions to display text statistics
+ *
+ */
 
-(function(window, document, $, NS, undefined) {
+(function(window, document, $, module, undefined) {
 
-    NS.longestLine = function(text, fontProp) {
-        var renderEl = $('.rendered-content').clone(),
+    module.lineStats = function(text, fontProp, fontSize) {
+        var renderText = text.split(' '),
+            lines = [],
+            lineWidth = [],
+            lineNo = 0,
+            lastIndex = 0,
             maxWidth = parseInt($('.maxWidth').val()),
-            lineNo = 0, lineContent = [], lineWidth = 0;
+            spaceWidth = parseFloat(module.textWidth(' ', fontProp)),
+            wordWidths = {};
 
-        renderEl.addClass('rendered-content-clone');
-        renderEl.css('width', $('.maxWidth').val());
-
-        $('body').append(renderEl);
-
-        textList = text.split(' ');
-
-        textList.forEach(function(el, index) {
-            lineNo = (parseInt(renderEl.html(textList.slice(0, index).join(' ')).height()) / parseInt(renderEl.css('line-height')) - 1)
-            if (!lineContent[lineNo]) {
-                lineContent[lineNo] = []
-                if (lineContent[lineNo - 1]) {
-                    console.log(
-                        lineNo,
-                        parseInt(renderEl.html(textList.slice(0, index).join(' ')).height()),
-                        parseInt(renderEl.css('line-height')),
-                        lineContent[lineNo - 1].join(' '),
-                        NS.textWidth(lineContent[lineNo - 1].join(' '), fontProp)
-                    );
-                }
-            }
-            lineContent[lineNo].push(el);
+        wordWidthsWithSpace = renderText.map(function(el, index) {
+            return parseFloat(module.textWidth(el, fontProp)) + spaceWidth;
         });
 
-        renderEl.remove();
+        if (Math.max.apply(null, wordWidthsWithSpace) > maxWidth) {
+            throw Error("ERR:TOO_LONG");
+        }
+
+        wordWidthsWithSpace.reduce(function(prev, current, index, arr) {
+            var total = prev + current;
+
+            if (total >= maxWidth || (index == arr.length - 1)) {
+                lines[lineNo++] = renderText.slice(lastIndex, (index == arr.length - 1) ? arr.length : index);
+                lineWidth.push(prev);
+                prev = 0;
+                lastIndex = index;
+            }
+            return prev + current;
+        });
+
+        return {
+            longestLineWidth: Math.max.apply(null, lineWidth),
+            lines: lines
+        };
     }
 
+    module.renderContent = function(lines) {
+        return lines.map(function(el, index) {
+            return '<p class="l' + index + '">' + el.join(' ') + '</p>';
+        });
+    }
 
-    // Get set width via the DOM way
-    NS.textWidth = function(text, fontProp) {
-
-        var tag = document.createElement("span"),
+    module.textWidth = function(text, fontProp) {
+        var tag = $('.str-width'),
             result = false;
 
-        tag.style.position   = "absolute";
-        tag.style.left       = "-100%";
-        tag.style.whiteSpace = "nowrap";
-        tag.style.font       = fontProp;
-        tag.innerHTML        = text;
+        if (tag.length < 1) {
+            tag = $('<span class="str-width">')
+            tag = $('<span>')
+                .addClass('str-width')
+                .css('left', '-100%')
+                .css('position', 'absolute')
+                .css('white-space', 'pre-wrap')
+                .attr('display', 'inline');
+            $('body').append(tag);
+        }
 
-        document.body.appendChild(tag);
-        result = tag.clientWidth;
-        document.body.removeChild(tag);
+        tag.html(text).css('font', fontProp);
+        result = tag.width();
         return result;
     };
 
-    NS.averageCharacterWidth = function(text, fontProp, fontSize) {
-        var width = NS.textWidth(text, fontProp);
-        return {
-            'width': width,
-            'avgWidth': Math.ceil(width/parseFloat(fontSize))
-        };
-    };
-
-    NS.isChanged = function() {
+    module.isChanged = function() {
         var args = arguments[0];
         return function(e) {
             var return_val = false;
@@ -82,27 +85,19 @@
 
             // Only do something when there is content
             if (!!args.inputContentVal) {
-                var fontProp = args.fontSize.val() + ' ' + args.fontFamily.val().toLowerCase(),
-                    values   = NS.averageCharacterWidth(args.inputContentVal.val(),
-                                                        fontProp,
-                                                        args.fontSize.val());
+                var fontProp = args.fontSize.val() + ' ' + args.fontFamily.val(),
+                    values = module.lineStats(
+                        args.inputContentVal.val(),
+                        fontProp,
+                        args.fontSize.val()
+                    );
 
                 // Show the results container
                 args.results.show();
 
                 // Setup content so its renderable
-                args.renderedContent
-                    .css('font', fontProp)
-                    .css('line-height', 'inherit')
-                    .html(args.inputContentVal.val())
-                    .width(args.maxWidth.val());
-
-                args.totalStrWidth.html(values.width);
-                args.totalChrs.html(args.inputContentVal.val().length);
-                args.numLines.html(
-                    args.renderedContent.height() / parseInt(args.renderedContent.css('line-height'))
-                );
-
+                $('body').append(module.renderContent(values.lines));
+                console.log(values.longestLineWidth);
             }
 
             return return_val;
@@ -112,18 +107,18 @@
     $(function() {
         $('.btn-render').on(
             'click',
-            NS.isChanged({
-                "inputContentVal" : $('.input-content'),
-                "fontSize"        : $('.fontSize'),
-                "fontFamily"      : $('.fontFamily'),
-                "results"         : $('.result'),
-                "maxWidth"        : $('.maxWidth'),
-                "renderedContent" : $('.rendered-content'),
-                "totalStrWidth"   : $('.totalStrWidth'),
-                "totalChrs"       : $('.totalChrs'),
-                "numLines"        : $('.numLines')
+            module.isChanged({
+                "inputContentVal": $('.input-content'),
+                "fontSize": $('.fontSize'),
+                "fontFamily": $('.fontFamily'),
+                "results": $('.result'),
+                "maxWidth": $('.maxWidth'),
+                "renderedContent": $('.rendered-content'),
+                "totalStrWidth": $('.totalStrWidth'),
+                "totalChrs": $('.totalChrs'),
+                "numLines": $('.numLines')
             })
         );
     });
 
-})(this, this.document, this.jQuery, this.TextStats=this.TextStats || {});
+})(this, this.document, this.jQuery, this.TextStats = this.TextStats || {});
