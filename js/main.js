@@ -15,14 +15,15 @@
             lines = [],
             lineWidth = [],
             lineNo = 0,
-            lastIndex = 0, longestlineWidth = 0,
+            lastIndex = 0,
+            longestlineWidth = 0,
             maxWidth = parseInt($('.maxWidth').val()),
             spaceWidth = parseFloat(module.textWidth(' ', fontProp)),
-            
+
             wordWidthsWithSpace = renderText.map(function(el) {
                 return parseFloat(module.textWidth(el, fontProp)) + spaceWidth;
-                });
-      
+            });
+
 
         if (Math.max.apply(null, wordWidthsWithSpace) > maxWidth) {
             return -1;
@@ -30,6 +31,13 @@
 
         wordWidthsWithSpace.reduce(function(prev, current, index, arr) {
             var total = prev + current;
+            console.log(
+                total >= maxWidth || (index == arr.length - 1),
+                total >= maxWidth,
+                (index == arr.length - 1),
+                index,
+                arr.length
+            );
 
             if (total >= maxWidth || (index == arr.length - 1)) {
                 lines[lineNo++] = renderText.slice(lastIndex, (index == arr.length - 1) ? arr.length : index);
@@ -79,7 +87,7 @@
         return function() {
             var return_val = false,
                 is_font_size_gt_max_width = (parseInt(args.fontSize.val()) > parseInt(args.maxWidth.val())),
-                is_font_size_max_width_not_null  = (!args.fontSize.val() || !args.maxWidth.val());
+                is_font_size_max_width_not_null = (!args.fontSize.val() || !args.maxWidth.val());
 
             // Checking if either of the values are not null and max-width is not greater than font-size.
             if (is_font_size_gt_max_width || is_font_size_max_width_not_null) {
