@@ -45,3 +45,25 @@ small.error {
 span.error {
     display: none;
 }
+
+.lines {
+    margin: 0;
+    padding: 0;
+}
+
+.line {
+    border: solid #999;
+    border-width: 1px 0 0;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+.note {
+    font-size: 10px;
+    margin: 10px auto;
+    padding: 10px 0 0 0px;
+    display: block;
+    text-align: center;
+}

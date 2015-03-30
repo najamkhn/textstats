@@ -15,17 +15,17 @@
             lines = [],
             lineWidth = [],
             lineNo = 0,
-            lastIndex = 0,
+            lastIndex = 0, longestlineWidth = 0,
             maxWidth = parseInt($('.maxWidth').val()),
             spaceWidth = parseFloat(module.textWidth(' ', fontProp)),
-            wordWidths = {};
-
-        wordWidthsWithSpace = renderText.map(function(el, index) {
-            return parseFloat(module.textWidth(el, fontProp)) + spaceWidth;
-        });
+            
+            wordWidthsWithSpace = renderText.map(function(el) {
+                return parseFloat(module.textWidth(el, fontProp)) + spaceWidth;
+                });
+      
 
         if (Math.max.apply(null, wordWidthsWithSpace) > maxWidth) {
-            throw Error("ERR:TOO_LONG");
+            return -1;
         }
 
         wordWidthsWithSpace.reduce(function(prev, current, index, arr) {
@@ -40,30 +40,32 @@
             return prev + current;
         });
 
+        longestlineWidth = Math.max.apply(null, lineWidth);
+
         return {
-            longestLineWidth: Math.max.apply(null, lineWidth),
+            longestLineIndex: lineWidth.indexOf(longestlineWidth),
+            longestLineWidth: longestlineWidth,
             lines: lines
         };
-    }
+    };
 
-    module.renderContent = function(lines) {
+    module.renderContent = function(lines, fontProp) {
         return lines.map(function(el, index) {
-            return '<p class="l' + index + '">' + el.join(' ') + '</p>';
+            return '<p class="lines l' + index + '" style="font: ' + fontProp + ';">' + el.join(' ') + '</p>';
         });
-    }
+    };
 
     module.textWidth = function(text, fontProp) {
         var tag = $('.str-width'),
             result = false;
 
         if (tag.length < 1) {
-            tag = $('<span class="str-width">')
             tag = $('<span>')
                 .addClass('str-width')
                 .css('left', '-100%')
                 .css('position', 'absolute')
                 .css('white-space', 'pre-wrap')
-                .attr('display', 'inline');
+                .attr('dsisireplay', 'inline');
             $('body').append(tag);
         }
 
@@ -74,12 +76,17 @@
 
     module.isChanged = function() {
         var args = arguments[0];
-        return function(e) {
-            var return_val = false;
+        return function() {
+            var return_val = false,
+                is_font_size_gt_max_width = (parseInt(args.fontSize.val()) > parseInt(args.maxWidth.val())),
+                is_font_size_max_width_not_null  = (!args.fontSize.val() || !args.maxWidth.val());
 
             // Checking if either of the values are not null and max-width is not greater than font-size.
-            if ((parseInt(args.fontSize.val()) > parseInt(args.maxWidth.val())) || (!args.fontSize.val() || !args.maxWidth.val())) {
-                $('span.error').html('Some of the required values are empty or invalid').css('display', 'block');
+            if (is_font_size_gt_max_width || is_font_size_max_width_not_null) {
+                $('span.error')
+                    .html('Some of the required values are empty or invalid')
+                    .css('display', 'block');
+                args.renderContent.hide();
                 return -1;
             }
 
@@ -92,17 +99,32 @@
                         args.fontSize.val()
                     );
 
+                if (values < 0) {
+                    args.errorValues.html('One of the entered word is longer than the max-width provided.<br />');
+                    args.renderContent.hide();
+                    return return_val;
+                }
+
                 // Show the results container
                 args.results.show();
 
                 // Setup content so its renderable
-                $('body').append(module.renderContent(values.lines));
-                console.log(values.longestLineWidth);
+                args.renderedContent
+                    .html(module.renderContent(values.lines, fontProp))
+                    .width(args.maxWidth.val() + "px");
+
+
+                // highlight the longest line
+                $('.l' + values.longestLineIndex).css('background', 'orange');
+
+                args.longestLine.html(values.longestLineWidth + "px");
+                args.longestLineIndex.html(values.longestLineIndex + 1);
+                args.totalLines.html(values.lines.length);
             }
 
             return return_val;
-        }
-    }
+        };
+    };
 
     $(function() {
         $('.btn-render').on(
@@ -114,9 +136,12 @@
                 "results": $('.result'),
                 "maxWidth": $('.maxWidth'),
                 "renderedContent": $('.rendered-content'),
-                "totalStrWidth": $('.totalStrWidth'),
-                "totalChrs": $('.totalChrs'),
-                "numLines": $('.numLines')
+                "lines": $('.lines'),
+                "longestLine": $('.longest-line'),
+                "longestLineIndex": $('.longest-line-index'),
+                "totalLines": $('.total-lines'),
+                "numLines": $('.numLines'),
+                "errorValues": $('span.error')
             })
         );
     });
