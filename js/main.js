@@ -88,7 +88,6 @@
             var return_val = false,
                 is_font_size_gt_max_width = (parseInt(args.fontSize.val()) > parseInt(args.maxWidth.val())),
                 is_font_size_max_width_not_null = (!args.fontSize.val() || !args.maxWidth.val());
-
             // Checking if either of the values are not null and max-width is not greater than font-size.
             if (is_font_size_gt_max_width || is_font_size_max_width_not_null) {
                 $('span.error')
@@ -100,7 +99,7 @@
 
             // Only do something when there is content
             if (!!args.inputContentVal) {
-                var fontProp = args.fontSize.val() + ' ' + args.fontFamily.val(),
+                var fontProp = args.fontSize.val() + 'px ' + args.fontFamily.val(),
                     values = module.lineStats(
                         args.inputContentVal.val(),
                         fontProp,
